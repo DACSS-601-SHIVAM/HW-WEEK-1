@@ -1,5 +1,5 @@
 ---
-title: An R Markdown document converted from "DACES_601_HW_1 (2).ipynb"
+title: R Notebook - Shivam
 output: html_document
 ---
 
@@ -9,7 +9,6 @@ code for starting fresh?
 
 ```{r}
 # Remove all objects from the current R environment
-# This ensures a clean workspace before running any analysis
 rm(list = ls())
 ```
 
@@ -19,17 +18,16 @@ code for opening a file from a url (File in excel), Name it fragility23?
 
 
 ```{r}
-#Checks whether the 'rio' package is already installed if the package is not installed, install it from CRAN
 if (!require("rio")) {
   install.packages("rio")
 }
-library(rio) #Loads the RIO package, which allows for importing excel easily
+library(rio)
 
 # Define the URL of the Excel file
-url <- "https://github.com/DACSS-Fundamentals/overview/raw/refs/heads/main/FSI-2023-DOWNLOAD.xlsx"
+url <- "https://github.com/DACSS-601-SHIVAM/HW-WEEK-1/raw/refs/heads/main/FSI-2023-DOWNLOAD.xlsx"
 
 # Import the Excel file into a data frame named fragility23
-fragility23 <- import(url) #Stores the resulting data frame in an object called fragility23
+fragility23 <- import(url)
 ```
 
 # exploratory commands
@@ -38,7 +36,7 @@ find out column names in fragility23?
 
 ```{r}
 # Display the column names of the dataset
-names(fragility23) #This helps identify available variables
+names(fragility23)
 ```
 
 check the data types in df?
@@ -53,15 +51,13 @@ show me the first 10 rows?
 
 ```{r}
 # Display the first 10 rows of the dataset
-#This provides an initial look at the data values
-head(fragility23, 10) 
+head(fragility23, 10)
 ```
 
 show me the last 10 rows?
 
 ```{r}
 # Display the last 10 rows of the dataset
-#This helps verify how the dataset ends
 tail(fragility23, 10)
 ```
 
@@ -82,7 +78,6 @@ keep <- grep(
 )
 
 # Subset the dataset to keep only selected columns
-#store the resulting data frame in frag23_sub
 frag23_sub <- fragility23[, keep]
 ```
 
@@ -92,7 +87,6 @@ rename frag23_sub columns, keep var codes only
 
 ```{r}
 # Rename the indicator columns using short variable codes
-#This helps with readability and consistency
 names(frag23_sub)[3:5] <- c("S1", "E2", "P1")
 ```
 
@@ -102,7 +96,6 @@ get me the top ten best countries on the “E2” measure from frag23_sub.
 
 ```{r}
 # Get the top ten countries with the best (highest) E2 values
-#Sort the dataset by E2 values in descending order, selects the top ten rows after sorting
 top10_E2 <- tail(
   frag23_sub[order(-frag23_sub$E2), ],
   10
@@ -117,7 +110,7 @@ top10_E2$Country
 give the statistical description of frag23_sub
 
 ```{r}
-# Display summary statistics such as mean, median, and quartiles for all variables in frag23_sub
+# Display summary statistics for the subsetted dataset
 summary(frag23_sub)
 ```
 
@@ -148,10 +141,10 @@ cor(frag23_sub[, -c(1, 2)], use = "complete.obs")
 regress P1 and E2 on S1.
 
 ```{r}
-# Fit a linear regression model with S1 as the dependent variable P1 and E2 are included as independent variables
+# Regress S1 on P1 and E2
 model <- lm(S1 ~ P1 + E2, data = frag23_sub)
 
-# Display a detailed summary of the regression results
+# Display regression results
 summary(model)
 ```
 
@@ -160,7 +153,6 @@ summary(model)
 give me a plot for the “P1” variable
 
 ```{r}
-# create a histogram of the P1 Variable, This visualizes the distribution of state legitimacy scores
 # Plot a histogram of the P1 variable
 hist(
   x = frag23_sub$P1,
@@ -172,7 +164,6 @@ hist(
 visual correlation between S1 and E2
 
 ```{r}
-#Create a scatter plot of S1 versus E2, This helps visualize the relationship between the two variables
 plot(
   x = frag23_sub$S1,
   y = frag23_sub$E2,
@@ -185,10 +176,10 @@ plot(
 visual of the regression P1 and E2 on S1
 
 ```{r}
-# Creates a logical variable indicating worst quartile belongs to the worst quartile of Total fragility
+# Create a logical variable indicating worst quartile
 frag23_sub$worstQt <- frag23_sub$Total >= q3_Total
 
-# Creates a scatter plot of S1 versus E2 points are colored based on worst quartile membership
+# Scatter plot with color indicating worst quartile membership
 plot(
   frag23_sub$S1,
   frag23_sub$E2,
@@ -215,7 +206,7 @@ plot(frag23_sub$E2, frag23_sub$S1,
      ylab = "Demographic Pressures (S1)",
      main = "Regression of S1 on E2")
 
-# Add the fitted regression line to the plot
+# Add regression line
 abline(lm(S1 ~ E2, data = frag23_sub), col = "red")
 ```
 
